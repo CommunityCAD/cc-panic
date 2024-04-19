@@ -34,3 +34,4 @@ The resource has two configuration files: `config.lua` for client-side options a
 ## Usage
 
 To use the panic button, type `/panic` in the chat. The resource will collect the enabled location information and send it to the Community CAD API.
+To clear the panic button, type `/stop_panic` in the chat. The resource will collect the enabled location information and send it to the Community CAD API.
