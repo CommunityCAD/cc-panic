@@ -1,13 +1,15 @@
 Config = {}
 
--- Enable or disable street name
+
+Config.ApiKey = 'API_KEY',
+Config.ApiUrl = 'https://demo.communitycad.app/api/v1/emergency/panic',
+Config.Debug = false
+
+
 Config.StreetName = true
-
--- Enable or disable crossing road name
 Config.CrossingRoadName = true
-
--- Enable or disable zone name
 Config.ZoneName = true
-
--- Enable or disable postal name [Uses nearest-postal resource]
 Config.PostalName = true
+
+-- Sonoran Radio Intergation
+Config.enableSonoranRadio = false

@@ -1,18 +1,18 @@
-RegisterNetEvent('panicButtonPressed')
-AddEventHandler('panicButtonPressed', function(streetName)
+RegisterNetEvent('cc-panic:panicButtonPressed')
+AddEventHandler('cc-panic:panicButtonPressed', function(streetName)
     local source = source
     local identifiers = GetPlayerIdentifiers(source)
 
     local discordId
-    for i = 1, #identifiers do
-        if string.sub(identifiers[i], 1, string.len("discord:")) == "discord:" then
-            discordId = string.gsub(identifiers[i], 'discord:', '')
+    for i, identifier in ipairs(identifiers) do
+        if string.sub(identifier, 1, 8) == "discord:" then
+            discordId = string.sub(identifier, 9)
             break
         end
     end
 
     if discordId == nil then
-        if ServerConfig.Debug then
+        if Config.Debug then
             print("No linked Discord account found.")
         end
         return
@@ -20,7 +20,7 @@ AddEventHandler('panicButtonPressed', function(streetName)
 
     local headers = {
         ['Content-Type'] = 'application/json',
-        ['token'] = ServerConfig.ApiKey
+        ['token'] = Config.ApiKey
     }
 
     local body = {
@@ -29,28 +29,29 @@ AddEventHandler('panicButtonPressed', function(streetName)
         ['is_panic'] = true
     }
 
-    PerformHttpRequest(ServerConfig.ApiUrl, function(err, text, headers)
-        if ServerConfig.Debug then
+    PerformHttpRequest(Config.ApiUrl, function(err, text, headers)
+        if Config.Debug then
             print(text)
         end
     end, 'POST', json.encode(body), headers)
 end)
 
-RegisterNetEvent('panicButtonUnpressed')
-AddEventHandler('panicButtonUnpressed', function(streetName)
+
+RegisterNetEvent('cc-panic:panicButtonUnpressed')
+AddEventHandler('cc-panic:panicButtonUnpressed', function(streetName)
     local source = source
     local identifiers = GetPlayerIdentifiers(source)
 
     local discordId
-    for i = 1, #identifiers do
-        if string.sub(identifiers[i], 1, string.len("discord:")) == "discord:" then
-            discordId = string.gsub(identifiers[i], 'discord:', '')
+    for i, identifier in ipairs(identifiers) do
+        if string.sub(identifier, 1, 8) == "discord:" then
+            discordId = string.sub(identifier, 9)
             break
         end
     end
 
-    if discordId == nil then
-        if ServerConfig.Debug then
+    if not discordId then
+        if Config.Debug then
             print("No linked Discord account found.")
         end
         return
@@ -58,7 +59,7 @@ AddEventHandler('panicButtonUnpressed', function(streetName)
 
     local headers = {
         ['Content-Type'] = 'application/json',
-        ['token'] = ServerConfig.ApiKey
+        ['token'] = Config.ApiKey
     }
 
     local body = {
@@ -67,10 +68,58 @@ AddEventHandler('panicButtonUnpressed', function(streetName)
         ['is_panic'] = false
     }
 
-    PerformHttpRequest(ServerConfig.ApiUrl, function(err, text, headers)
-        if ServerConfig.Debug then
+    PerformHttpRequest(Config.ApiUrl, function(err, text, headers)
+        if Config.Debug then
             print(text)
         end
     end, 'POST', json.encode(body), headers)
 end)
 
+
+if Config.enableSonoranRadio then
+    RegisterNetEvent('SonoranCAD::callcommands:SendPanicApi')
+    AddEventHandler('SonoranCAD::callcommands:SendPanicApi', function()
+        local playerId = source
+        local detailedLocation = ""
+
+        TriggerClientEvent('cc-panic:getDetailedLocation', playerId)
+
+        RegisterServerEvent('cc-panic:greceiveDetailedLocation')
+        AddEventHandler('cc-panic:greceiveDetailedLocation', function(location)
+            detailedLocation = location
+
+            -- Proceed with sending panic API request with detailedLocation data
+            local identifiers = GetPlayerIdentifiers(playerId)
+            local discordId
+            for _, identifier in ipairs(identifiers) do
+                if string.sub(identifier, 1, 8) == "discord:" then
+                    discordId = string.sub(identifier, 9)
+                    break
+                end
+            end
+
+            if discordId then
+                local headers = {
+                    ['Content-Type'] = 'application/json',
+                    ['token'] = Config.ApiKey
+                }
+                local body = {
+                    ['user_id'] = discordId,
+                    ['location'] = detailedLocation,
+                    ['is_panic'] = true
+                }
+
+                PerformHttpRequest(Config.ApiUrl, function(err, text, headers)
+                    if Config.Debug then
+                        print(text)
+                    end
+                end, 'POST', json.encode(body), headers)
+            else
+                if Config.Debug then
+                    print("No linked Discord account found for player ID:", playerId)
+                end
+            end
+            TriggerClientEvent('cc-panic:handlePanicEvent', -1, playerId)
+        end)
+    end)
+end
