@@ -1,4 +1,4 @@
-# FiveM Panic Button Resource
+# CommunityCAD Panic Button Resource
 
 This resource adds a panic button functionality to your FiveM server. When a player presses the panic button, the resource collects detailed location information and sends it to the Community CAD API.
 
@@ -20,12 +20,11 @@ The resource has two configuration files: `config.lua` for client-side options a
 - `CrossingRoadName`: Enable or disable the crossing road name. Set to `true` to enable, `false` to disable.
 - `ZoneName`: Enable or disable the zone name. Set to `true` to enable, `false` to disable.
 - `PostalName`: Enable or disable the postal code. Set to `true` to enable, `false` to disable.
-
-### `server_config.lua`
-
 - `Api`: The API key for the Community CAD API.
 - `ApiUrl`: The URL of the Community CAD API.
 - `Debug`: Enable or disable debug mode. Set to `true` to enable, `false` to disable.
+- `enableSonoranRadio` Enable Sonoran Radio Intergration for thier Commands and UI Radio Panic Button Press. Set to `true` to enable, `false` to disable.
+
 
 ## Dependencies
 
@@ -33,5 +32,11 @@ The resource has two configuration files: `config.lua` for client-side options a
 
 ## Usage
 
-To use the panic button, type `/panic` in the chat. The resource will collect the enabled location information and send it to the Community CAD API.
-To clear the panic button, type `/stop_panic` in the chat. The resource will collect the enabled location information and send it to the Community CAD API.
+- `/panic`: Hit you panic Button, and sent it to Community CAD!
+- `/stop_panic`: Un-hit you panic Button, and sent it to Community CAD!
+
+If `enableSonoranRadio` is `true`
+- Radio Panic Button
+- Radio Hotkey and Commands
+
+Please Refer to the [Sonoran Radio Docs](https://info.sonoranradio.com/) for more info!
