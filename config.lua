@@ -1,8 +1,8 @@
 Config = {}
 
 
-Config.ApiKey = 'API_KEY',
-Config.ApiUrl = 'https://demo.communitycad.app/api/v1/emergency/panic',
+Config.ApiKey = 'API_KEY'
+Config.ApiUrl = 'https://demo.communitycad.app/api/v1/emergency/panic'
 Config.Debug = false
 
 
